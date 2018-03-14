@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" type="text/css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <h1>Uncovr</h1>
+    <nav>
+        <a href="/">Home</a> |
+        <a href="/preferences">Preferences</a> |
+        <a href="/recommendations">Recommendations</a> |
+    </nav>
+
+    <h2> Save Confirmation </h2>
+    Thanks for saving user: {{user}} now have ratings: {{ratings}}.
+</body>
+</html>

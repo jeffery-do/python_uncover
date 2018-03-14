@@ -1,0 +1,8 @@
+Flask
+psycopg2
+SQLAlchemy
+Flask-WTF
+numpy
+pandas
+turicreate
+flask-bootstrap

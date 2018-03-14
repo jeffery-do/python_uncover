@@ -1,0 +1,42 @@
+version: '3'
+services:
+  db:
+    image: "sameersbn/postgresql:9.6-2"
+    volumes:
+      - ./dbdata:/var/lib/postgresql
+    env_file:
+      - env_file
+    ports:
+      - "5432:5432"
+    networks:
+      - db_nw
+  flaskapp:
+    build: .
+    restart: always
+    env_file:
+      - env_file
+    volumes:
+      - .:/opt/services/flaskapp/src
+    networks:
+      - db_nw
+      - web_nw
+    depends_on:
+      - db
+    command: ["./wait-for-it.sh", "-s", "--timeout=30", "db:5432", "--", "python", "__init__.py"]
+  nginx:
+    image: "nginx:1.13.5"
+    ports:
+      - "80:80"
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+    networks:
+      - web_nw
+    depends_on: 
+      - flaskapp
+networks:
+  db_nw:
+    driver: bridge
+  web_nw:
+    driver: bridge
+volumes:
+  dbdata:
