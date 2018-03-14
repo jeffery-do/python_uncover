@@ -123,8 +123,8 @@ class User:
                     self.userid = d['userid']
                     # need to get all ratings ...
                     self.ratings = self.get_db_ratings(self.userid)
-                    USERFOUND = True #TODO add username to DB on inital
-        if USERFOUND == False: # if user not found, must add user to DB
+                    USERFOUND = True
+        if USERFOUND == False:
             aUser = dbUsers(name=self.username)
             db_session.merge(aUser)
             db_session.commit()
