@@ -12,7 +12,7 @@
 </head>
 
 <body>
-    <h1 class="main">Recommendations</h1>
+    <h1 class="main">Concerts</h1>
     <div class="navbar">
       <nav>
           <a href="/">Home</a> |
@@ -22,28 +22,41 @@
       </nav>
     Please navigate to the preferences page to start entering your preferences!
     </div>
-        <div name="current_user">current_user: {{ session['USER_NAME'] }}</div>
+    <div name="current_user">current_user: {{ session['USER_NAME'] }}</div>
     <div class="Rtable Rtable--3cols">
       <div style="order:1;" class="Rtable-cell">
         left
       </div>
       <div style="order:1;" class="Rtable-cell">
+        middle
         {% if not empty %}
-          Below are your reccomendations.
-          <div class="Rtable Rtable--2cols">
-            <div style="order:1;" class="Rtable-cell">Artist Name</div>
-            {% for artist in list_recs %}
+          Here is a list of the most favorited concerts.
+          <div class="Rtable Rtable--3cols">
+            <div style="order:1;" class="Rtable-cell">
+              Concert Name
+            </div>
+            {% for concert in concerts %}
               <div style="order:{{loop.index + 1}};" class="Rtable-cell">
-                {{artist}}
+                {{concert['name']}}
               </div>
             {% endfor %}
-            <div style="order:1;" class="Rtable-cell">Concerts</div>
-            {% for artist in list_recs %}
+            <div style="order:1;" class="Rtable-cell">
+              Likes
+            </div>
+              {% for concert in concerts %}
+                <div style="order:{{loop.index + 1}};" class="Rtable-cell">
+                  {{concert['rating']}}
+                </div>
+              {% endfor %}
+            <div style="order:1;" class="Rtable-cell">
+              Url
+            </div>
+              {% for concert in concerts %}
               <div style="order:{{loop.index + 1}};" class="Rtable-cell">
-                {{concerts[artist]}}
+                {{concert['url']}}
               </div>
-            {% endfor %}
-          </div>
+              {% endfor %}
+            </div>
         {% else %}
             You currently have no ratings. Please visit the preferences tab and rate some artists.
         {% endif %}

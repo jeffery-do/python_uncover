@@ -2,10 +2,11 @@
 <html>
 <head>
     <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='css/site.css') }}" rel="stylesheet" type="text/css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-<h1>404: Page Not Found</h1>
+<h1 class="main">404: Page Not Found</h1>
 {{ reason }}
 </body>
 </html>

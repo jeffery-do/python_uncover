@@ -6,3 +6,9 @@ numpy
 pandas
 turicreate
 flask-bootstrap
+fuzzywuzzy
+bs4
+jsonpath_rw
+spotipy
+flask_oauthlib
+python-Levenshtein

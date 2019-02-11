@@ -4,6 +4,7 @@ from flask import request
 from flask import flash
 from flask import session
 from flask import Response
+from flask_oauthlib.client import OAuth, OAuthException
 from sqlalchemy import inspect
 import sys
 reload(sys)
@@ -20,24 +21,65 @@ import numpy as np
 import collections
 import pandas as pd
 import traceback
+import ticketmaster
+
 app = Flask(__name__)
 app.secret_key = 'A_great_secRet_KeyyyYy'
 
 app.config["USERNAME"] = "admin"
 app.config["PASSWORD"] = "password"
+app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 lock = threading.Lock()
 
-from models import dbArtists, dbUsers, dbRatings
+spot = None
+
+TEMPLATES_AUTO_RELOAD = True
+
+# SPOTIFY_APP_ID
+with app.app_context():
+    from spotify import spotify_page
+    # app = Flask(__name__)
+    # spot = gen_spotify_oauth()
+    # app.spotify = spot
+    app.register_blueprint(spotify_page)
+
+from models import dbArtists, dbUsers, dbRatings, dbConcerts
 from database import db_session, db_engine
 # from flask_sqlalchemy import SQLAlchemy
 
 # ---------
 
 # Auth
+
+# design docs need to be written...
+# like actually now that I have the appropraite
+# data from spotify
+# I can now combine my datasets
+# using some form of distance metric
+# I can go and cateogrize my data
+# I'm thinking I should srink my dataset
+# and clean it for POC purposes
+# And in doing so, make it easier
+# to make everything look nice
+# After I do some formatting
+# I should have recommended artists
+# with their photos
+# With something like that, I believe it's all appropriate.
+# another day...
+# it wouldn't be that bad to create a page that organizes
+# the spotify data so that it's easier to act
+# on it's data
+# Yep make sure!
+
+# hehe I'm opening some more stuff here...
+# I really should get some work in... I'm already
+# past the deadline I've set for myself
+# but now it's funny. It seems like I'm actually going
+# to do this now... Wierd how that happens...
 
 def ok_user_and_password(username, password):
     """This function is called to check if a username /
@@ -332,8 +374,12 @@ def preferences():
     all_ratings = user.show_all_ratings_by_name()
     # 5 rating boxes
     # show boxes in order, and send to screen
+    concerts = ticketmaster.get_concerts_for_artists(artists, tm_collection)
+    logger.debug("concerts found on ticketmaster {}".format(concerts))
     print 'all_ratings: ', all_ratings
-    return render_template('preferences.html', artist_ratings=zip(artists, default_ratings), all_ratings=all_ratings, current_user=session["USER_NAME"])
+    all_rating_artists = [a for a,r in all_ratings.items()]
+    all_rating_concerts = ticketmaster.get_concerts_for_artists(all_rating_artists, tm_collection)
+    return render_template('preferences.html', artist_ratings=zip(artists, default_ratings), all_ratings=all_ratings, current_user=session["USER_NAME"], concerts=concerts, all_rating_concerts=all_rating_concerts)
 
 @app.route("/recommendations")
 def recommendations():
@@ -361,9 +407,38 @@ def recommendations():
         recs = m.recommend(users=[user.get_userid()],k=5,verbose=True)
         print(recs)
         list_recs = [aid_to_artist_name(x) for x in recs['artistid']]
-        return render_template('recommendations.html', list_recs=list_recs, empty=False)
+
+        concerts = ticketmaster.get_concerts_for_artists(list_recs, tm_collection)
+        logger.debug("concerts found on ticketmaster {}".format(concerts))
+        return render_template('recommendations.html', list_recs=list_recs, concerts=concerts, empty=False)
     else:
         return render_template('recommendations.html', empty=True)
+
+
+def find_concerts():
+    exists = db_session.query(dbConcerts.concertid).first()
+    concert_list = []
+    if exists is not None:
+        rows = dbRatings.query.all()
+        for row in rows:
+            d = object_as_dict(row)
+            logger.debug('reading dbConcerts: concertid: {}, concertname:{}, artists:{}, url:{}'.format(d['concertid'], d['concertname'], d['artists'], d['url']))
+            concert_list.append(d)
+    return concert_list
+
+@app.route("/concerts")
+def concerts_page():
+    concerts = find_concerts()
+    if concerts != []:
+        return render_template('concerts.html', concerts=concerts, empty=False)
+    else:
+        return render_template('concerts.html', empty=True)
+
+
+@app.route("/reload_ticketmaster")
+def reload_ticketmaster():
+    global tm_collection
+    tm_collection = ticketmaster.collect_activities(0,5)
 
 def ratings_to_sframe(ratings):
     vals = list(ratings.data.values())
@@ -398,9 +473,42 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
+# @app.route("/spotify_login")
+# def spotify_login():
+#     callback = url_for(
+#         'spotify_authorized',
+#         next=request.args.get('next') or request.referrer or None,
+#         _external=True
+#     )
+#     return spot.authorize(callback=callback)
+#
+# @app.route('/login/authorized')
+# def spotify_authorized():
+#     resp = spot.authorized_response()
+#     if resp is None:
+#         return 'Access denied: reason={0} error={1}'.format(
+#             request.args['error_reason'],
+#             request.args['error_description']
+#         )
+#     if isinstance(resp, OAuthException):
+#         return 'Access denied: {0}'.format(resp.message)
+#
+#     session['oauth_token'] = (resp['access_token'], '')
+#     me = spot.get('/me')
+#     return 'Logged in as id={0} name={1} redirect={2}'.format(
+#         me.data['id'],
+#         me.data['name'],
+#         request.args.get('next')
+#     )
+#
+# @spot.tokengetter
+# def get_spotify_oauth_token():
+#     return session.get('oauth_token')
 
 if __name__ == "__main__":
     init_gartists()
     init_default_user()
     tot_ratings = Ratings()
+    reload_ticketmaster()
+    print("APPLICATION IS READY")
     app.run(host="0.0.0.0", port=5090)

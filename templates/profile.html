@@ -1,0 +1,40 @@
+<doctype html>
+<html>
+<head>
+	<link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" type="text/css">
+	<link href="{{ url_for('static', filename='css/site.css') }}" rel="stylesheet" type="text/css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<h1 class="main">Profile</h1>
+
+<body>
+	<div class="navbar">
+		<nav>
+				<a href="/">Home</a> |
+				<a href="/preferences">Preferences</a> |
+				<a href="/recommendations">Recommendations</a> |
+				<a href="/concerts">Concerts</a> |
+		</nav>
+	Please navigate to the preferences page to start entering your preferences!
+	</div>
+    <div name="current_user">current_user: {{ session['USER_NAME'] }}</div>
+	<div class="Rtable Rtable--3cols">
+		<div style="order:1;" class="Rtable-cell">
+			left
+		</div>
+		<div style="order:1;" class="Rtable-cell">
+			middle
+			<div class="Rtable Rtable--1cols">
+				{% for item in sorted_array %}
+				<div style="order:{{loop.index + 1}};" class="Rtable-cell">
+					{{ item }}
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+		<div style="order:1;" class="Rtable-cell">
+			right
+		</div>
+	</div>
+</body>
+</html>

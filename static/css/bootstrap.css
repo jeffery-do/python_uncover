@@ -3920,9 +3920,10 @@ tbody.collapse.show {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   padding: 0.5rem 1rem;
+  text-align: center;
 }
 
 .navbar-brand {

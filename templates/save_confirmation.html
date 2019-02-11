@@ -2,18 +2,32 @@
 <html>
 <head>
     <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='css/site.css') }}" rel="stylesheet" type="text/css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
-    <h1>Uncovr</h1>
-    <nav>
-        <a href="/">Home</a> |
-        <a href="/preferences">Preferences</a> |
-        <a href="/recommendations">Recommendations</a> |
-    </nav>
-
-    <h2> Save Confirmation </h2>
-    Thanks for saving user: {{user}} now have ratings: {{ratings}}.
+    <h1 class="main">Uncovr</h1>
+    <div class="navbar">
+      <nav>
+          <a href="/">Home</a> |
+          <a href="/preferences">Preferences</a> |
+          <a href="/recommendations">Recommendations</a> |
+          <a href="/concerts">Concerts</a> |
+      </nav>
+    Please navigate to the preferences page to start entering your preferences!
+    </div>
+        <div name="current_user">current_user: {{ session['USER_NAME'] }}</div>
+    <div class="Rtable Rtable--3cols">
+      <div style="order:1;" class="Rtable-cell">
+        left
+      </div>
+      <div style="order:1;" class="Rtable-cell">
+        <h2> Save Confirmation </h2>
+        Thanks for saving user: {{user}} now have ratings: {{ratings}}.      </div>
+      <div style="order:1;" class="Rtable-cell">
+        right
+      </div>
+    </div>
 </body>
 </html>

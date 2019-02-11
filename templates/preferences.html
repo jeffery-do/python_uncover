@@ -2,55 +2,79 @@
 <html>
 <head>
     <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='css/site.css') }}" rel="stylesheet" type="text/css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
-    <h1>Preferences</h1>
-    <nav>
-        <a href="/">Home</a> |
-        <a href="/preferences">Preferences</a> |
-        <a href="/recommendations">Recommendations</a> |
-    </nav>
+    <h1 class="main">Preferences</h1>
+    <div class="navbar">
+      <nav>
+          <a href="/">Home</a> |
+          <a href="/preferences">Preferences</a> |
+          <a href="/recommendations">Recommendations</a> |
+          <a href="/concerts">Concerts</a> |
+      </nav>
+    Please navigate to the preferences page to start entering your preferences!
+    </div>
     <div name="current_user">current_user: {{ session['USER_NAME'] }}</div>
     <form method=post enctype=multipart/form-data>
       <label for="User_Lbl">Login As User:</label> <input type=text name="USER_NAME"> <input type=submit value=Login>
     </form>
-    <form method=post enctype=multipart/form-data>
-        <table>
-            <tr>
-                <th>Artist Name</th>
-                <th>Rating</th>
-            </tr>
-            {% for artist,default_rating in artist_ratings %}
-            <tr>
-                <td>{{ artist }}</td>
-                <td>
-                    <select name="rating-{{artist}}">
-                        <option value="none">none</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                    </select>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-        <input type="submit">
-    </form>
-    <table>
-      <tr>
-          <th>Artist Name</th>
-          <th>Rating</th>
-      </tr>
-      {% for artist,rating in all_ratings.items() %}
-      <tr>
-          <td>{{ artist }}</td>
-          <td>{{ rating }}</td>
-      </tr>
-      {% endfor %}
-    </table
+    <div class="Rtable Rtable--3cols">
+      <div style="order:1;" class="Rtable-cell">
+          <form method=post enctype=multipart/form-data>
+            <div class="Rtable Rtable--2cols">
+                <div style="order:1;" class="Rtable-cell">Artist Name</div>
+                {% for artist,default_rating in artist_ratings %}
+                    <div style="order:{{loop.index + 1}};" class="Rtable-cell">{{ artist }}</div>
+                {% endfor %}
+                <div style="order:1;" class="Rtable-cell">Rating</div>
+                {% for artist,default_rating in artist_ratings %}
+                    <div style="order:{{loop.index + 1}};" class="Rtable-cell">
+                        <select name="rating-{{artist}}">
+                            <option value="none">none</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                {% endfor %}
+            </div>
+            <input type="submit">
+          </form>
+      </div>
+      <div style="order:1;" class="Rtable-cell">
+        <div class="Rtable Rtable--2cols">
+          <div style="order:1;" class="Rtable-cell"> Artist Name </div>
+          {% for artist,default_rating in artist_ratings %}
+              <div style="order:{{loop.index + 1}};" class="Rtable-cell"> {{artist}} </div>
+          {% endfor %}
+          <div style="order:1;" class="Rtable-cell"> Concerts </div>
+          {% for artist,default_rating in artist_ratings %}
+              <div style="order:{{loop.index + 1}};" class="Rtable-cell"> {{concerts[artist]}} </div>
+          {% endfor %}
+        </div>
+        <div class="Rtable Rtable--3cols">
+              <div style="order:1;" class="Rtable-cell">Artist Name</div>
+              {% for artist,rating in all_ratings.items() %}
+                  <div style="order:{{loop.index + 1}};" class="Rtable-cell">{{ artist }}</div>
+              {% endfor %}
+              <div style="order:1;" class="Rtable-cell">Rating</div>
+              {% for artist,rating in all_ratings.items() %}
+                  <div style="order:{{loop.index + 1}};" class="Rtable-cell">{{ rating }}</div>
+              {% endfor %}
+              <div style="order:1;" class="Rtable-cell">Concerts</div>
+              {% for artist,rating in all_ratings.items() %}
+                  <div style="order:{{loop.index + 1}};" class="Rtable-cell">{{ all_rating_concerts[artist] }}</div>
+              {% endfor %}
+          </div>
+        </div>
+      <div style="order:1;" class="Rtable-cell">
+        right
+      </div>
+    </div>
 </body>
 </html>
